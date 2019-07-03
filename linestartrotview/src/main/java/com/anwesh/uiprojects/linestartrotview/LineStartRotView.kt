@@ -196,4 +196,26 @@ class LineStartRotView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : LineStartRotView) {
+
+        private val animator : Animator = Animator(view)
+        private val lsr : LineStartRot = LineStartRot(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            lsr.draw(canvas, paint)
+            animator.animate {
+                lsr.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            lsr.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
