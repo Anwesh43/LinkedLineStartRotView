@@ -20,7 +20,11 @@ val strokeFactor : Int = 90
 val sizeFactor : Float = 2.9f
 val foreColor : Int = Color.parseColor("#4527A0")
 val backColor : Int = Color.parseColor("#BDBDBD")
-val sweepDeg : Float = 360f / lines
+val totalDeg : Float = 360f
+val sweepDeg : Float = totalDeg / lines
+val rFactor : Int = 4
+val delay : Long = 20
+
 
 fun Int.inverse() : Float = 1f / this
 fun Float.scaleFactor() : Float = Math.floor(this / scDiv).toFloat()
@@ -34,17 +38,15 @@ fun Float.updateValue(dir : Float, a : Int, b : Int) : Float = mirrorValue(a, b)
 
 fun Canvas.drawLineStart(i : Int, deg : Float, sc : Float, size : Float, paint : Paint) {
     save()
-    rotate(Math.max(deg, i * sweepDeg))
+    rotate(Math.max(sweepDeg * i, deg))
     drawLine(0f, 0f, 0f, -size * sc, paint)
     restore()
 }
 
 fun Canvas.drawLinesStart(sc1 : Float, sc2 : Float, size : Float, paint : Paint) {
-    var deg : Float = 0f
+    var deg : Float = totalDeg * sc2
     for (j in 0..(lines - 1)) {
         var sc1j : Float = sc1.divideScale(j, lines)
-        var sc2j : Float = sc2.divideScale(j, lines)
-        deg += sweepDeg * sc2j
         drawLineStart(j, deg, sc1j, size, paint)
     }
 }
@@ -59,9 +61,13 @@ fun Canvas.drawLSRNode(i : Int, scale : Float, paint : Paint) {
     paint.color = foreColor
     paint.strokeCap = Paint.Cap.ROUND
     paint.strokeWidth = Math.min(w, h) / strokeFactor
+    save()
+    translate(w / 2, gap * (i + 1))
+    drawCircle(0f, 0f, size / rFactor, paint)
     for (j in 0..(lines - 1)) {
         drawLinesStart(sc1, sc2, size, paint)
     }
+    restore()
 }
 
 class LineStartRotView(ctx : Context) : View(ctx) {
@@ -85,7 +91,7 @@ class LineStartRotView(ctx : Context) : View(ctx) {
     data class State(var scale : Float = 0f, var dir : Float = 0f, var prevScale : Float = 0f) {
 
         fun update(cb : (Float) -> Unit) {
-            scale += scale.updateValue(dir, lines, 1)
+            scale += scale.updateValue(dir, lines, lines)
             if (Math.abs(scale - prevScale) > 1) {
                 scale = prevScale + dir
                 dir = 0f
@@ -108,7 +114,7 @@ class LineStartRotView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
@@ -225,7 +231,7 @@ class LineStartRotView(ctx : Context) : View(ctx) {
         fun create(activity : Activity) : LineStartRotView {
             val view : LineStartRotView = LineStartRotView(activity)
             activity.setContentView(view)
-            return view 
+            return view
         }
     }
 }
