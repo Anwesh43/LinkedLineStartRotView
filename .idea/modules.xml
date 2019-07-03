@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/LinkedLineStartRotView.iml" filepath="$PROJECT_DIR$/LinkedLineStartRotView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/linestartrotview/linestartrotview.iml" filepath="$PROJECT_DIR$/linestartrotview/linestartrotview.iml" />
+    </modules>
+  </component>
+</project>
